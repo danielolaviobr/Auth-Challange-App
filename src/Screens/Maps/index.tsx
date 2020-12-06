@@ -48,10 +48,11 @@ const Maps: React.FC = () => {
   }, []);
 
   if (
-    !location.latitude &&
-    !location.longitude &&
-    !location.latitudeDelta &&
-    !location.longitudeDelta
+    (!location.latitude &&
+      !location.longitude &&
+      !location.latitudeDelta &&
+      !location.longitudeDelta) ||
+    !location
   ) {
     return (
       <Container>
