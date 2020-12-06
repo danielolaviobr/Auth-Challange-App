@@ -14,16 +14,14 @@ import {Region} from 'react-native-maps';
 const Maps: React.FC = () => {
   const [location, setLocation] = useState<Region>({} as Region);
 
-  const handleRegionChange = useCallback((region: Region) => {
-    console.log(region);
-    setLocation({...region});
-  }, []);
-
+  // Fetches the user location to center the map around it initialy
+  // useCallback is used to make the method loading more efficient
   const userLocation = useCallback(() => {
     Geolocation.getCurrentPosition(
       (position) => {
+        // If the data is fetch correctly, the position is deconstructed and saved to location state
         const {latitude, longitude} = position.coords;
-        console.log(latitude, longitude);
+        // The latitudeDelta and longitudeDelta are the zoom parameters of the map, they are initialized as 1
         setLocation({
           latitude,
           longitude,
@@ -38,6 +36,7 @@ const Maps: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // When the app starts and the OS is android, request the fine location permission, to use in the map, to show the user location
     if (Platform.OS === 'android') {
       PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -47,6 +46,8 @@ const Maps: React.FC = () => {
     userLocation();
   }, []);
 
+  // Validates that the location data object exists and had valid data
+  // While it is not available it displays a loading indicator
   if (
     (!location.latitude &&
       !location.longitude &&

@@ -7,6 +7,8 @@ import AuthRoutes from './auth.routes';
 
 const Routes: React.FC = () => {
   const {isLoading, user} = useAuth();
+  // Await for the useAuth hook to load the user information
+  // While that displays a loading indicator
   if (isLoading) {
     return (
       <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
@@ -14,6 +16,11 @@ const Routes: React.FC = () => {
       </View>
     );
   }
+  // Routes are separeted between authenticated users and not authenticated users.
+  // The authentication data comes from the useAuth hook
+
+  // Having different routing components for authenticated and not authenticated users makes it possible to block
+  // unauthorized screens to be displayed
   return user.email && user.addressId ? <AppRoutes /> : <AuthRoutes />;
 };
 

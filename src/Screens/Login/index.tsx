@@ -15,13 +15,18 @@ interface LoginFormDataProps {
   id: number;
 }
 
+// Login screen uses the unform libary to handle the form data
+// It uses Yup to validate the form fields
+// It uses the useAuth hook to submit the login data
 const Login: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const idInputRef = useRef<TextInput>(null);
   const {signIn} = useAuth();
 
+  // useCallback is used to make the method loading more efficient
   const handleSubmit = useCallback(async (loginData: LoginFormDataProps) => {
     try {
+      // Creates a validation screma to validate the fields and set proper error messaging
       const schema = Yup.object().shape({
         email: Yup.string()
           .required('E-mail is required')
@@ -29,13 +34,21 @@ const Login: React.FC = () => {
         id: Yup.string().required('ID is required'),
       });
 
+      // Validates the data with the previously create schema
+      // If invalid an error is thrown
       await schema.validate(loginData);
+
+      // If the data is valid the signIn method is called to validate the provided data with the API data
       await signIn(loginData);
     } catch (err) {
+      // If the error is of type Yup.ValidationError, it uses the error message the was set up in the schema
       if (err instanceof Yup.ValidationError) {
         Alert.alert('Authentication failed', err.message);
         return;
       }
+
+      // The only other possible error oring is the signIn method. Meaning that the credentials are invalid
+      // A proper message is displayed in an alert to the user
       Alert.alert('Invalid credentials', 'Please check your e-mail and/or id.');
       console.log(err);
     }
